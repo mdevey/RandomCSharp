@@ -677,4 +677,17 @@ public sealed class DynamicTypeDescriptor : ICustomTypeDescriptor, INotifyProper
     {
         return Component;
     }
+
+    static public DynamicTypeDescriptor From(object component)
+    {
+        Type thing = component.GetType();
+        DynamicTypeDescriptor building_dtd = new DynamicTypeDescriptor(thing);
+        DynamicTypeDescriptor dtd = building_dtd.FromComponent(component);
+        return dtd;
+    }
+
+    public DynamicProperty Get(string propertyName)
+    {
+        return (DynamicProperty)Properties[propertyName];
+    }
 }
