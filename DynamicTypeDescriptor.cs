@@ -210,6 +210,16 @@ public sealed class DynamicTypeDescriptor : ICustomTypeDescriptor, INotifyProper
             }
         }
 
+        public void AddAttribute<T>(T att) where T : Attribute
+        {
+            _attributes.Add(att);
+        }
+
+        public void ConvertAttributes(Converter<Attribute, Attribute> converter)
+        {
+            _attributes = _attributes.ConvertAll(converter);
+        }
+
         public override AttributeCollection Attributes
         {
             get
@@ -508,6 +518,34 @@ public sealed class DynamicTypeDescriptor : ICustomTypeDescriptor, INotifyProper
         foreach (PropertyDescriptor pd in remove)
         {
             Properties.Remove(pd);
+        }
+    }
+
+    public void RemovePropertiesWithAttribute(Attribute att)
+    {
+        if (att == null)
+            throw new ArgumentNullException("attribute");
+
+        List<PropertyDescriptor> remove = new List<PropertyDescriptor>();
+        foreach (PropertyDescriptor pd in Properties)
+        {
+            if (pd.Attributes.Contains(att))
+            {
+                remove.Add(pd);
+            }
+        }
+
+        foreach (PropertyDescriptor pd in remove)
+        {
+            Properties.Remove(pd);
+        }
+    }
+
+    public void ConvertAllPropertyAttributes(Converter<Attribute, Attribute> converter)
+    {
+        foreach (DynamicProperty dp in Properties)
+        {
+            dp.ConvertAttributes(converter);
         }
     }
 
